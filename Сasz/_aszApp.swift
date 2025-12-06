@@ -1,17 +1,21 @@
-//
-//  _aszApp.swift
-//  Сasz
-//
-//  Created by Артём Коротков on 04.12.2025.
-//
-
 import SwiftUI
 
 @main
 struct _aszApp: App {
+    
+    init() {
+        let stats = UserDefaultsManager.shared
+        let key = "didAddInitialCoins"
+        if !UserDefaults.standard.bool(forKey: key) {
+            stats.addCoins(5000)
+            UserDefaults.standard.set(true, forKey: "isMusicOn")
+            UserDefaults.standard.set(true, forKey: key)
+        }
+    }
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            HomeView()
         }
     }
 }

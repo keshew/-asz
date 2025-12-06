@@ -1,10 +1,3 @@
-//
-//  _aszUITestsLaunchTests.swift
-//  СaszUITests
-//
-//  Created by Артём Коротков on 04.12.2025.
-//
-
 import XCTest
 
 final class _aszUITestsLaunchTests: XCTestCase {
