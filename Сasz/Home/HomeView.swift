@@ -12,7 +12,11 @@ struct HomeView: View {
                        Slots(image: "slot3", title: "Fishy Slots", desc: "Luxury jewels and riches", array: ["3x3", "Min: 20", "Max: 200"]),
                        Slots(image: "slot4", title: "Egypt Slots", desc: "Big bets and exciting wins.", array: ["3x3", "Min: 20", "Max: 200"])]
     @State var showAlert = false
-    
+    @State var isSlot1 = false
+    @State var isSlot2 = false
+    @State var isSlot3 = false
+    @State var isSlot4 = false
+    @State  var coin = UserDefaultsManager.shared.coins
     var body: some View {
         ZStack {
             ZStack(alignment: .top) {
@@ -57,7 +61,7 @@ struct HomeView: View {
                                     .resizable()
                                     .frame(width: 24, height: 31)
                                 
-                                Text("10000")
+                                Text("\(coin)")
                                     .font(.custom("PaytoneOne-Regular", size: 18))
                                     .foregroundStyle(Color(red: 245/255, green: 199/255, blue: 61/255))
                             }
@@ -67,7 +71,7 @@ struct HomeView: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(Color(red: 120/255, green: 0/255, blue: 240/255), lineWidth: 3)
                             }
-                            .padding(.top)
+                            .padding(.top, UIScreen.main.bounds.width > 1000 ? -10 : 15)
                         }
                         
                         ScrollView(showsIndicators: false) {
@@ -124,7 +128,14 @@ struct HomeView: View {
                                                                     }
                                                                     
                                                                     Button(action: {
-                                                                        
+                                                                        switch item.image {
+                                                                        case "slot1": isSlot1 = true
+                                                                        case "slot2": isSlot2 = true
+                                                                        case "slot3": isSlot3 = true
+                                                                        case "slot4": isSlot4 = true
+                                                                        default:
+                                                                            isSlot1 = true
+                                                                        }
                                                                     }) {
                                                                         Text("Play Now")
                                                                             .font(.custom("PaytoneOne-Regular", size: 10))
@@ -251,6 +262,11 @@ struct HomeView: View {
                                         }
                                     }
                                 }
+                                
+                                if UIScreen.main.bounds.width > 1000 {
+                                    Spacer()
+                                    Color.clear.frame(width: 0)
+                                }
                             }
                         }
                         .padding(.top, 5)
@@ -258,6 +274,23 @@ struct HomeView: View {
                     .padding(.trailing)
                 }
             }
+        }
+        .onAppear {
+            NotificationCenter.default.addObserver(forName: Notification.Name("RefreshData"), object: nil, queue: .main) { _ in
+                self.coin = UserDefaultsManager.shared.coins
+            }
+        }
+        .fullScreenCover(isPresented: $isSlot1) {
+            ZeusSlotsView()
+        }
+        .fullScreenCover(isPresented: $isSlot2) {
+            LuckySlotsView()
+        }
+        .fullScreenCover(isPresented: $isSlot3) {
+            FishSlotsView()
+        }
+        .fullScreenCover(isPresented: $isSlot4) {
+            EgyptSlotsView()
         }
     }
 }

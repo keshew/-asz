@@ -33,7 +33,11 @@ class MinesViewModel: ObservableObject {
 
     func startGame() {
         guard coin >= bet else { return }
+        UserDefaultsManager.shared.revealSafeTile()
+        UserDefaultsManager.shared.playGame()
         UserDefaultsManager.shared.removeCoins(bet)
+        UserDefaultsManager.shared.playGame() 
+        UserDefaultsManager.shared.placeBet(bet)
         coin = UserDefaultsManager.shared.coins
         resetCards()
         isPlaying = true

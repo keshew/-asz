@@ -32,6 +32,10 @@ class CoinFlipViewModel: ObservableObject {
 
             if userChoiceIsTail == finalResultTail {
                 UserDefaultsManager.shared.addCoins(bet * 2)
+                UserDefaultsManager.shared.playGame()
+                UserDefaultsManager.shared.placeBet(bet)
+                UserDefaultsManager.shared.playGame()
+                UserDefaultsManager.shared.winCoinFlip()
                 coin = UserDefaultsManager.shared.coins
                 onFlipResult?(true)
             } else {

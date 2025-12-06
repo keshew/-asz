@@ -23,8 +23,8 @@ class SoundManager: ObservableObject {
         }
     }
     
-    @Published var isSoundEnabled: Bool = UserDefaults.standard.bool(forKey: "isOns")
-    @Published var isMusicEnabled: Bool = UserDefaults.standard.bool(forKey: "isMusicOn")
+    @Published var isSoundEnabled: Bool = true /*UserDefaults.standard.bool(forKey: "isOns")*/
+    @Published var isMusicEnabled: Bool = true /*UserDefaults.standard.bool(forKey: "isMusicOn")*/
 
     init() {
         loadBackgroundMusic()
@@ -76,7 +76,7 @@ class SoundManager: ObservableObject {
     }
     
     private func loadSlot1Music() {
-        if let url = Bundle.main.url(forResource: "slot1", withExtension: "mp3") {
+        if let url = Bundle.main.url(forResource: "slots", withExtension: "mp3") {
             slot1Player = try? AVAudioPlayer(contentsOf: url)
             slot1Player?.volume = soundEffectVolume
             slot1Player?.prepareToPlay()

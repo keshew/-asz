@@ -324,7 +324,6 @@ struct ZeusSlotsView: View {
                                 
                                 Spacer()
                             }
-                            
                         }
                         .padding(.top, 5)
                     }

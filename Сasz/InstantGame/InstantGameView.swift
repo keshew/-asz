@@ -25,6 +25,12 @@ struct InstantGameView: View {
                        Slots(image: "instant5", title: "Coin Flip", desc: "Heads or tails? Make your choice", array: ["Min: 5", "Max: 500"], color: Color(red: 251/255, green: 191/255, blue: 36/255))]
     
     @State var showAlert = false
+    @State  var coin = UserDefaultsManager.shared.coins
+    @State var isCrasht1 = false
+    @State var isCrasht2 = false
+    @State var isCrasht3 = false
+    @State var isCrasht4 = false
+    @State var isCrasht5 = false
     
     var body: some View {
         ZStack {
@@ -60,7 +66,6 @@ struct InstantGameView: View {
                 HStack {
                     Spacer()
                     
-                    
                     VStack {
                         HStack {
                             Spacer()
@@ -70,7 +75,7 @@ struct InstantGameView: View {
                                     .resizable()
                                     .frame(width: 24, height: 31)
                                 
-                                Text("10000")
+                                Text("\(coin)")
                                     .font(.custom("PaytoneOne-Regular", size: 18))
                                     .foregroundStyle(Color(red: 245/255, green: 199/255, blue: 61/255))
                             }
@@ -80,7 +85,7 @@ struct InstantGameView: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(Color(red: 120/255, green: 0/255, blue: 240/255), lineWidth: 3)
                             }
-                            .padding(.top)
+                            .padding(.top, UIScreen.main.bounds.width > 1000 ? -10 : 15)
                         }
                         
                         ScrollView(showsIndicators: false) {
@@ -138,7 +143,15 @@ struct InstantGameView: View {
                                                                     }
                                                                     
                                                                     Button(action: {
-                                                                        
+                                                                        switch item.image {
+                                                                        case "instant1": isCrasht1 = true
+                                                                        case "instant2": isCrasht2 = true
+                                                                        case "instant3": isCrasht3 = true
+                                                                        case "instant4": isCrasht4 = true
+                                                                        case "instant5": isCrasht5 = true
+                                                                        default:
+                                                                            isCrasht1 = true
+                                                                        }
                                                                     }) {
                                                                         Text("Play Now")
                                                                             .font(.custom("PaytoneOne-Regular", size: 10))
@@ -203,7 +216,7 @@ struct InstantGameView: View {
                                                                         }
                                                                         
                                                                         Button(action: {
-                                                                            
+                                                                       
                                                                         }) {
                                                                             Text("Play Now")
                                                                                 .font(.custom("PaytoneOne-Regular", size: 10))
@@ -265,6 +278,11 @@ struct InstantGameView: View {
                                         }
                                     }
                                 }
+                                
+                                if UIScreen.main.bounds.width > 1000 {
+                                    Spacer()
+                                    Color.clear.frame(width: 0)
+                                }
                             }
                         }
                         .padding(.top, 5)
@@ -272,6 +290,26 @@ struct InstantGameView: View {
                     .padding(.trailing)
                 }
             }
+        }
+        .onAppear {
+            NotificationCenter.default.addObserver(forName: Notification.Name("RefreshData"), object: nil, queue: .main) { _ in
+                self.coin = UserDefaultsManager.shared.coins
+            }
+        }
+        .fullScreenCover(isPresented: $isCrasht1) {
+            PlinkoView()
+        }
+        .fullScreenCover(isPresented: $isCrasht2) {
+            DiceRollView()
+        }
+        .fullScreenCover(isPresented: $isCrasht3) {
+            WheelView()
+        }
+        .fullScreenCover(isPresented: $isCrasht4) {
+            MinesView()
+        }
+        .fullScreenCover(isPresented: $isCrasht5) {
+            CoinFlipView()
         }
     }
 }

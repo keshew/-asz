@@ -45,6 +45,8 @@ class ZeusSlotsViewModel: ObservableObject {
     func spin() {
         UserDefaultsManager.shared.removeCoins(bet)
         coin =  UserDefaultsManager.shared.coins
+        UserDefaultsManager.shared.placeBet(bet)
+        UserDefaultsManager.shared.playGame() 
         isSpinning = true
         soundManager.playSlot1()
         spinningTimer?.invalidate()
@@ -96,6 +98,8 @@ class ZeusSlotsViewModel: ObservableObject {
             "zeus5": 25,
             "zeus6": 10
         ]
+        UserDefaultsManager.shared.playGame()
+        UserDefaultsManager.shared.cashout5x()
         
         checkRows(minCounts: minCounts, multipliers: multipliers, totalWin: &totalWin, maxMultiplier: &maxMultiplier)
         

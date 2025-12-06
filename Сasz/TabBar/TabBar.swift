@@ -2,17 +2,18 @@ import SwiftUI
 
 struct TabBarView: View {
     @State private var selectedTab: CustomTabBar.TabType = .Home
+    @ObservedObject private var soundManager = SoundManager.shared
     
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack {
                 if selectedTab == .Home {
                     HomeView()
-                } else if selectedTab == .Games {
+                } else if selectedTab == .Instant {
                     InstantGameView()
-                } else if selectedTab == .Shop {
-                    AchievmentsView()
                 } else if selectedTab == .Achiev {
+                    AchievmentsView()
+                } else if selectedTab == .Profile {
                     ProfileView()
                 }
             }
@@ -34,12 +35,13 @@ struct TabBarView: View {
 
 struct CustomTabBar: View {
     @Binding var selectedTab: TabType
-    
+    @StateObject private var manager = UserDefaultsManager.shared
+    var profileImg: String { manager.profileImageName }
     enum TabType: Int {
         case Home
-        case Games
-        case Shop
+        case Instant
         case Achiev
+        case Profile
     }
     
     var body: some View {
@@ -65,9 +67,9 @@ struct CustomTabBar: View {
                 
                 VStack(alignment: .leading, spacing: 15) {
                     TabBarItem(imageName: "tab1", tab: .Home, selectedTab: $selectedTab)
-                    TabBarItem(imageName: "tab2", tab: .Games, selectedTab: $selectedTab)
-                    TabBarItem(imageName: "tab3", tab: .Shop, selectedTab: $selectedTab)
-                    TabBarItem(imageName: "tab4", tab: .Achiev, selectedTab: $selectedTab)
+                    TabBarItem(imageName: "tab2", tab: .Instant, selectedTab: $selectedTab)
+                    TabBarItem(imageName: "tab3", tab: .Achiev, selectedTab: $selectedTab)
+                    TabBarItem(imageName: "tab4", tab: .Profile, selectedTab: $selectedTab)
                 }
                 .padding(.horizontal, 10)
                 .frame(height: 170)
@@ -80,7 +82,7 @@ struct CustomTabBar: View {
                         .frame(width: 140, height: 1)
                     
                     HStack {
-                        Image("profileImg1")
+                        Image(profileImg)
                             .resizable()
                             .frame(width: 30, height: 30)
                         

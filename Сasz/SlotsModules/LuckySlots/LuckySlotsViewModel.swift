@@ -46,6 +46,8 @@ class LuckySlotsViewModel: ObservableObject {
         UserDefaultsManager.shared.removeCoins(bet)
         coin =  UserDefaultsManager.shared.coins
         isSpinning = true
+        UserDefaultsManager.shared.placeBet(bet)
+        UserDefaultsManager.shared.playGame() 
         soundManager.playSlot1()
         spinningTimer?.invalidate()
         winningPositions.removeAll()
@@ -96,7 +98,7 @@ class LuckySlotsViewModel: ObservableObject {
             "lucky5": 25,
             "lucky6": 10
         ]
-        
+        UserDefaultsManager.shared.playGame()
         checkRows(minCounts: minCounts, multipliers: multipliers, totalWin: &totalWin, maxMultiplier: &maxMultiplier)
         
         checkMainDiagonal(minCounts: minCounts, multipliers: multipliers, totalWin: &totalWin, maxMultiplier: &maxMultiplier)

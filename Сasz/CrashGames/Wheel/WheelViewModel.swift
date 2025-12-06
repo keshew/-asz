@@ -51,8 +51,10 @@ class WheelViewModel: ObservableObject {
          }
          
          isSpinning = true
-        
+        UserDefaultsManager.shared.playGame()
+        UserDefaultsManager.shared.playGame() 
         let _ = UserDefaultsManager.shared.removeCoins(bet)
+        UserDefaultsManager.shared.placeBet(bet)
         coin = UserDefaultsManager.shared.coins
         
          let fullRotations = Double.random(in: 3...6)

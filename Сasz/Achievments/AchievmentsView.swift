@@ -1,30 +1,41 @@
 import SwiftUI
 
 struct Aciev: Identifiable {
-    var id = UUID()
-    var title: String
-    var desc: String
-    var image: String
-    var cuurentGoal: Int
-    var goal: Int
-    var isDone = false
+    let id = UUID()
+    let title: String
+    let desc: String
+    let image: String
+    let progressKey: String   
+    let goal: Int
+    
+    var cuurentGoal: Int {
+        UserDefaultsManager.shared.value(forKey: progressKey) ?? 0
+    }
+    
+    var isDone: Bool {
+        cuurentGoal >= goal
+    }
 }
 
 struct AchievmentsView: View {
     @StateObject var achievmentsModel =  AchievmentsViewModel()
-    var achiev = [Aciev(title: "Mine Sweeper", desc: "Reveal 15 safe tiles in Mines", image: "ach1", cuurentGoal: 0, goal: 15, isDone: true),
-                  Aciev(title: "Coin Flipper", desc: "Win 20 coin flips", image: "ach2", cuurentGoal: 0, goal: 20),
-                  Aciev(title: "Crash Survivor", desc: "Cash out at 5x or higher in Crash", image: "ach3", cuurentGoal: 0, goal: 5),
-                  Aciev(title: "Level 10", desc: "Reach level 10", image: "ach4", cuurentGoal: 0, goal: 10),
-                  Aciev(title: "Level 25", desc: "Reach level 25", image: "ach5", cuurentGoal: 0, goal: 25),
-                  Aciev(title: "Level 50", desc: "Reach level 50", image: "ach6", cuurentGoal: 0, goal: 50),
-                  Aciev(title: "Marathon Player", desc: "Play 100 games", image: "ach7", cuurentGoal: 0, goal: 100),
-                  Aciev(title: "Risk Taker", desc: "Bet 500 coins in a single game", image: "ach8", cuurentGoal: 0, goal: 500),
-                  Aciev(title: "Mega Multiplier", desc: "Win with a 10x multiplier or higher", image: "ach9", cuurentGoal: 0, goal: 10),
-                  Aciev(title: "Fruit Lover", desc: "Win 100 times on Fruit Slots", image: "ach10", cuurentGoal: 0, goal: 100),
-                  Aciev(title: "Classic Fan", desc: "Win 100 times on Classic Slots", image: "ach11", cuurentGoal: 0, goal: 100),
-                  Aciev(title: "Gold Digger", desc: "Win 100 times on Gold Slots", image: "ach12", cuurentGoal: 0, goal: 100)]
+    @State private var manager = UserDefaultsManager.shared
+    var achiev = [
+        Aciev(title: "Mine Sweeper", desc: "Reveal 15 safe tiles in Mines", image: "ach1", progressKey: "minesRevealed", goal: 15),
+        Aciev(title: "Coin Flipper", desc: "Win 20 coin flips", image: "ach2", progressKey: "coinFlipsWon", goal: 20),
+        Aciev(title: "Crash Survivor", desc: "Cash out at 5x or higher in Crash", image: "ach3", progressKey: "crashCashouts5x", goal: 1),
+        Aciev(title: "Level 10", desc: "Reach level 10", image: "ach4", progressKey: "currentLevel", goal: 10),
+        Aciev(title: "Level 25", desc: "Reach level 25", image: "ach5", progressKey: "currentLevel", goal: 25),
+        Aciev(title: "Level 50", desc: "Reach level 50", image: "ach6", progressKey: "currentLevel", goal: 50),
+        Aciev(title: "Marathon Player", desc: "Play 100 games", image: "ach7", progressKey: "totalGamesPlayed", goal: 100),
+        Aciev(title: "Risk Taker", desc: "Bet 500 coins in a single game", image: "ach8", progressKey: "maxBetAmount", goal: 500),
+        Aciev(title: "Mega Multiplier", desc: "Win with a 10x multiplier or higher", image: "ach9", progressKey: "maxMultiplierWon", goal: 10),
+        Aciev(title: "Fruit Lover", desc: "Win 100 times on Fruit Slots", image: "ach10", progressKey: "fruitSlotsWins", goal: 100),
+        Aciev(title: "Classic Fan", desc: "Win 100 times on Classic Slots", image: "ach11", progressKey: "classicSlotsWins", goal: 100),
+        Aciev(title: "Gold Digger", desc: "Win 100 times on Gold Slots", image: "ach12", progressKey: "goldSlotsWins", goal: 100)
+    ]
     
+    @State var coins = UserDefaultsManager.shared.coins
     var body: some View {
         ZStack {
             ZStack(alignment: .top) {
@@ -59,7 +70,6 @@ struct AchievmentsView: View {
                 HStack {
                     Spacer()
                     
-                    
                     VStack {
                         HStack {
                             Spacer()
@@ -69,7 +79,7 @@ struct AchievmentsView: View {
                                     .resizable()
                                     .frame(width: 24, height: 31)
                                 
-                                Text("10000")
+                                Text("\(coins)")
                                     .font(.custom("PaytoneOne-Regular", size: 18))
                                     .foregroundStyle(Color(red: 245/255, green: 199/255, blue: 61/255))
                             }
@@ -79,7 +89,7 @@ struct AchievmentsView: View {
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(Color(red: 120/255, green: 0/255, blue: 240/255), lineWidth: 3)
                             }
-                            .padding(.top)
+                            .padding(.top, UIScreen.main.bounds.width > 1000 ? -10 : 15)
                         }
                         
                         ScrollView(showsIndicators: false) {
@@ -106,6 +116,9 @@ struct AchievmentsView: View {
                                                 .stroke(Color(red: 96/255, green: 78/255, blue: 31/255), lineWidth: 6)
                                                 .overlay {
                                                     VStack {
+                                                        let completedCount = achiev.filter { $0.isDone }.count
+                                                        let totalCount = achiev.count
+                                                        
                                                         HStack {
                                                             Text("Progress")
                                                                 .font(.custom("PaytoneOne-Regular", size: 12))
@@ -113,7 +126,7 @@ struct AchievmentsView: View {
                                                             
                                                             Spacer()
                                                             
-                                                            Text("1/12")
+                                                            Text("\(completedCount)/\(totalCount)")
                                                                 .font(.custom("PaytoneOne-Regular", size: 14))
                                                                 .foregroundStyle(Color(red: 251/255, green: 191/255, blue: 36/255))
                                                         }
@@ -124,16 +137,19 @@ struct AchievmentsView: View {
                                                                     .fill(Color(red: 64/255, green: 64/255, blue: 64/255))
                                                                     .frame(width: geometry.size.width)
                                                                 
+                                                                let progress = Double(completedCount) / Double(totalCount)
                                                                 Rectangle()
                                                                     .fill(LinearGradient(colors: [Color(red: 245/255, green: 157/255, blue: 11/255),
-                                                                                                  Color(red: 249/255, green: 115/255, blue: 23/255)], startPoint: .leading, endPoint: .trailing))
-                                                                    .frame(width: geometry.size.width - 100)
+                                                                                                Color(red: 249/255, green: 115/255, blue: 23/255)],
+                                                                                 startPoint: .leading, endPoint: .trailing))
+                                                                    .frame(width: geometry.size.width * progress)
                                                             }
                                                             .cornerRadius(20)
                                                         }
                                                         .frame(height: 15)
                                                         
-                                                        Text("6.5% Complete")
+                                                        let percentage = Int((Double(completedCount) / Double(totalCount)) * 100)
+                                                        Text("\(percentage)% Complete")
                                                             .font(.custom("PaytoneOne-Regular", size: 10))
                                                             .foregroundStyle(Color(red: 204/255, green: 204/255, blue: 204/255))
                                                     }
@@ -264,6 +280,11 @@ struct AchievmentsView: View {
                                             }
                                         }
                                     }
+                                }
+                                
+                                if UIScreen.main.bounds.width > 1000 {
+                                    Spacer()
+                                    Color.clear.frame(width: 0)
                                 }
                             }
                         }

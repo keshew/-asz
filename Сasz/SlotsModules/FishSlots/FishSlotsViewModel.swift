@@ -51,6 +51,9 @@ class FishSlotsViewModel: ObservableObject {
     func spin() {
         UserDefaultsManager.shared.removeCoins(bet)
         coin =  UserDefaultsManager.shared.coins
+        UserDefaultsManager.shared.playGame()
+        UserDefaultsManager.shared.placeBet(bet)
+        UserDefaultsManager.shared.playGame() 
         isSpinning = true
         soundManager.playSlot1()
         spinningTimer?.invalidate()

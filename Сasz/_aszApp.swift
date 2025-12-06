@@ -15,7 +15,7 @@ struct _aszApp: App {
     
     var body: some Scene {
         WindowGroup {
-            HomeView()
+            TabBarView()
         }
     }
 }

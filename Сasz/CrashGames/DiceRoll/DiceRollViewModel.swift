@@ -18,6 +18,9 @@ class DiceRollViewModel: ObservableObject {
       func startFlip(userChoice: Bool) {
           guard !isFlipping, bet <= coin else { return }
           UserDefaultsManager.shared.removeCoins(bet)
+          UserDefaultsManager.shared.playGame()
+          UserDefaultsManager.shared.placeBet(bet)
+          UserDefaultsManager.shared.playGame() 
           coin = UserDefaultsManager.shared.coins
           userChoiceIsTail = userChoice
           

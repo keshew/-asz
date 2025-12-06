@@ -38,7 +38,10 @@ class GameData: ObservableObject {
         guard bet <= balance else {
             return
         }
+        UserDefaultsManager.shared.playGame()
         let _ = UserDefaultsManager.shared.removeCoins(bet)
+        UserDefaultsManager.shared.playGame() 
+        UserDefaultsManager.shared.placeBet(bet)
         balance = UserDefaultsManager.shared.coins
         reward = 0.0
         isPlayTapped = true
@@ -106,15 +109,15 @@ class GameSpriteKit: SKScene, SKPhysicsContactDelegate {
     }
     
     func createObstacles() {
-        let numberOfRows = size.width > 1000 ? 6 : 4
-        let obstacleSize = CGSize(width: size.width > 1000 ? 30 : 20, height: size.width > 1000 ? 30 : 13)
-        let horizontalSpacing: CGFloat = size.width > 1000 ? 90 : 45
+        let numberOfRows = size.width > 1200 ? 5 : 4
+        let obstacleSize = CGSize(width: size.width > 1200 ? 30 : 20, height: size.width > 1200 ? 30 : 13)
+        let horizontalSpacing: CGFloat = size.width > 1200 ? 90 : 45
 
         for row in 0..<numberOfRows {
-            let countInRow = 13 - row  // Decreasing count from 13 downwards
+            let countInRow = 13 - row
             let totalWidth = CGFloat(countInRow) * (obstacleSize.width + horizontalSpacing) - horizontalSpacing
             let xOffset = (size.width - totalWidth) / 2 + obstacleSize.width / 2
-            let yPosition = (UIScreen.main.bounds.width > 1000 ? size.height / 1.35 : size.height / 1.32) - CGFloat(row) * (obstacleSize.height + (UIScreen.main.bounds.width > 1200 ? 105 : 60))
+            let yPosition = (UIScreen.main.bounds.width > 1200 ? size.height / 1.35 : size.height / 1.32) - CGFloat(row) * (obstacleSize.height + (UIScreen.main.bounds.width > 1200 ? 105 : 60))
             
             for col in 0..<countInRow {
                 let obstacle = SKSpriteNode(imageNamed: "obstacle")
@@ -137,7 +140,7 @@ class GameSpriteKit: SKScene, SKPhysicsContactDelegate {
         guard let game = self.game else { return }
         let labels = game.labels
         let count = labels.count
-        let ticketWidth: CGFloat = 82
+        let ticketWidth: CGFloat = size.width > 1200 ? 120 : 82
         let horizontalSpacing: CGFloat = 10
         let totalWidth = CGFloat(count) * (ticketWidth + horizontalSpacing) - horizontalSpacing
         let xOffset = (size.width - totalWidth) / 2 + ticketWidth / 2
@@ -146,12 +149,12 @@ class GameSpriteKit: SKScene, SKPhysicsContactDelegate {
         for i in 0..<count {
             let label = SKLabelNode(text: labels[i])
             label.fontName = "PaytoneOne-Regular"
-            label.fontSize = 18
+            label.fontSize = size.width > 1200 ? 34 : 18
             label.fontColor = UIColor(red: 253/255, green: 255/255, blue: 193/255, alpha: 1)
             label.verticalAlignmentMode = .center
             label.horizontalAlignmentMode = .center
             label.position = CGPoint(x: 0, y: 0)
-            label.xScale = 1.5
+            label.xScale = size.width > 1200 ? 1.2 : 1.5
             label.yScale = 1
             label.name = "ticket_\(i)"
 
@@ -183,7 +186,7 @@ class GameSpriteKit: SKScene, SKPhysicsContactDelegate {
         ballsInPlay = 0
         
         let ball = SKSpriteNode(imageNamed: "ball")
-        ball.size = CGSize(width: size.width > 1000 ? 25 : 30, height: 20)
+        ball.size = CGSize(width: size.width > 1200 ? 35 : 30, height: size.width > 1200 ? 32 : 20)
         ball.position = CGPoint(x: size.width / 2,
                                 y: size.height / 1.15)
         ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 3)
@@ -260,7 +263,7 @@ class GameSpriteKit: SKScene, SKPhysicsContactDelegate {
     func createBall(atIndex index: Int) {
         
         let ball = SKSpriteNode(imageNamed: "ball")
-        ball.size = CGSize(width: size.width > 1000 ? 25 : 30, height: 20)
+        ball.size = CGSize(width: size.width > 1200 ? 25 : 30, height: 20)
         ball.position = CGPoint(x: size.width / 2,
                                 y: size.height / 1.15)
         ball.physicsBody = SKPhysicsBody(circleOfRadius: ball.size.width / 3)
@@ -393,7 +396,7 @@ struct PlinkoView: View {
                                         Image("plinkoBg")
                                             .resizable()
                                             .aspectRatio(contentMode: .fill)
-                                            .frame(width: 550, height: 290)
+                                            .frame(width: UIScreen.main.bounds.width > 1200 ? 700 : 550, height: UIScreen.main.bounds.width > 1200 ? 420 : 290)
                                             .overlay {
                                                 RoundedRectangle(cornerRadius: 14)
                                                     .stroke(Color(red: 35/255, green: 212/255, blue: 238/255), lineWidth: 7)
@@ -403,9 +406,9 @@ struct PlinkoView: View {
                                                                 .fill(.black.opacity(0.5))
                                                                 .overlay {
                                                                     SpriteView(scene: viewModel.createGameScene(gameData: gameModel), options: [.allowsTransparency])
-                                                                        .frame(width: UIScreen.main.bounds.width > 1000 ? 350 : 270, height: UIScreen.main.bounds.width > 1000 ? 300 : 180)
+                                                                        .frame(width: UIScreen.main.bounds.width > 1200 ? 370 : 270, height: UIScreen.main.bounds.width > 1200 ? 300 : 180)
                                                                 }
-                                                                .frame(width: 400, height: 190)
+                                                                .frame(width: UIScreen.main.bounds.width > 1200 ? 500 : 400, height: UIScreen.main.bounds.width > 1200 ? 300 : 190)
                                                                 .cornerRadius(16)
                                                             
                                                             HStack(spacing: 20) {
@@ -492,7 +495,7 @@ struct PlinkoView: View {
                                                     }
                                             }
                                     }
-                                    .frame(width: 550, height: 290)
+                                    .frame(width: UIScreen.main.bounds.width > 1200 ? 700 : 550, height: UIScreen.main.bounds.width > 1200 ? 420 : 290)
                                     .cornerRadius(14)
                                 
                                 Spacer()
